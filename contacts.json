@@ -1,0 +1,38 @@
+
+[
+  {
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "email": "ada@example.com",
+    "favoriteColor": "green",
+    "birthday": "1815-12-10"
+  },
+  {
+    "firstName": "Alan",
+    "lastName": "Turing",
+    "email": "alan@example.com",
+    "favoriteColor": "blue",
+    "birthday": "1912-06-23"
+  },
+  {
+    "firstName": "Grace",
+    "lastName": "Hopper",
+    "email": "grace@example.com",
+    "favoriteColor": "navy",
+    "birthday": "1906-12-09"
+  },
+  {
+    "firstName": "Linus",
+    "lastName": "Torvalds",
+    "email": "linus@example.com",
+    "favoriteColor": "black",
+    "birthday": "1969-12-28"
+  },
+  {
+    "firstName": "Hedy",
+    "lastName": "Lamarr",
+    "email": "hedy@example.com",
+    "favoriteColor": "purple",
+    "birthday": "1914-11-09"
+  }
+]
