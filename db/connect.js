@@ -7,13 +7,15 @@ const initDb = async (callback) => {
   if (_db) return callback(null, _db);
 
   const uri = process.env.CONNECTION_STRING;
-  if (!uri) return callback(new Error('Missing CONNECTION_STRING in .env'));
+  const dbName = process.env.DB_NAME || 'contactsdb'; // ✅ uses Render variable
+
+  if (!uri) return callback(new Error('Missing CONNECTION_STRING in .env or Render'));
 
   try {
     const client = new MongoClient(uri);
     await client.connect();
-    _db = client.db('contactsDB'); // your DB name
-    console.log('✅ Database initialized successfully');
+    _db = client.db(dbName);
+    console.log(`✅ Database "${dbName}" initialized successfully`);
     callback(null, _db);
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB:', err.message);
@@ -27,3 +29,4 @@ const getDb = () => {
 };
 
 module.exports = { initDb, getDb };
+
