@@ -4,9 +4,13 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
+const cors = require('cors'); // ← optional, recommended
 const db = require('./db/connect');
 const contactsRoutes = require('./routes/contacts');
 const { exec } = require('child_process');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDoc = require('./swagger/swagger.json');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,20 +18,24 @@ const isProd = process.env.NODE_ENV === 'production';
 
 // Middleware
 app.use(express.json());
+app.use(cors()); // ← optional, recommended
 
-// Health route (for quick checks and Render)
-app.get('/', (_req, res) => res.send('Hello World!'));
-
-// Mount contacts routes (MVC)
-app.use('/contacts', contactsRoutes);
-
-// Optional request log (helpful locally)
+// Dev request log (place BEFORE routes to log requests)
 if (!isProd) {
   app.use((req, _res, next) => {
     console.log('> Incoming:', req.method, req.url);
     next();
   });
 }
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
+// Health route (for quick checks and Render)
+app.get('/', (_req, res) => res.json({ ok: true, docs: '/api-docs' }));
+
+// Mount contacts routes (MVC)
+app.use('/contacts', contactsRoutes);
 
 // Helper: auto-open default browser locally
 function openBrowser(url) {
@@ -46,14 +54,12 @@ db.initDb((err) => {
   }
 
   // Bind to localhost locally; let platform default in production (Render needs 0.0.0.0)
-  const listenArgs = isProd
-    ? [PORT]
-    : [PORT, 'localhost'];
+  const listenArgs = isProd ? [PORT] : [PORT, 'localhost'];
 
   app.listen(...listenArgs, () => {
-    // This prints a clickable URL in VS Code/most terminals
     const url = `http://localhost:${PORT}`;
     console.log(`🚀 Server listening on ${url}`);
-    openBrowser(url); // auto-opens Chrome/your default browser locally
+    openBrowser(url);
   });
 });
+

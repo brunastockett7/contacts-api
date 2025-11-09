@@ -1,0 +1,101 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Contacts API",
+    "version": "1.0.0",
+    "description": "CRUD API for contacts (GET all, GET by id, POST, PUT, DELETE)"
+  },
+  "servers": [{ "url": "/" }],
+  "paths": {
+    "/contacts": {
+      "get": {
+        "summary": "Get all contacts",
+        "responses": {
+          "200": {
+            "description": "List of contacts",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Contact" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a contact",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } }
+          }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "get": {
+        "summary": "Get contact by id",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "Contact", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "put": {
+        "summary": "Update contact (replace all fields)",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
+          "400": { "description": "Invalid id / validation error" },
+          "404": { "description": "Not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete contact",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "665e9bf8c8f7f06e99f6d2aa" },
+          "firstName": { "type": "string", "example": "Ada" },
+          "lastName": { "type": "string", "example": "Lovelace" },
+          "email": { "type": "string", "format": "email", "example": "ada@example.com" },
+          "favoriteColor": { "type": "string", "example": "pink" },
+          "birthday": { "type": "string", "example": "1995-01-01" }
+        },
+        "required": ["_id", "firstName", "lastName", "email", "favoriteColor", "birthday"]
+      },
+      "ContactCreate": {
+        "type": "object",
+        "properties": {
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "favoriteColor": { "type": "string" },
+          "birthday": { "type": "string" }
+        },
+        "required": ["firstName", "lastName", "email", "favoriteColor", "birthday"]
+      }
+    }
+  }
+}
