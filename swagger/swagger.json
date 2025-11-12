@@ -1,37 +1,36 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Contacts API",
+    "title": "W03 CRUD API",
     "version": "1.0.0",
-    "description": "CRUD API for contacts (GET all, GET by id, POST, PUT, DELETE)"
+    "description": "Contacts & Companies CRUD with validation and error handling"
   },
-  "servers": [{ "url": "/" }],
+  "servers": [
+    { "url": "http://localhost:3000" },
+    { "url": "https://YOUR-RENDER-APP.onrender.com" }
+  ],
   "paths": {
     "/contacts": {
       "get": {
-        "summary": "Get all contacts",
+        "summary": "List contacts",
         "responses": {
           "200": {
             "description": "List of contacts",
-            "content": {
-              "application/json": {
-                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Contact" } }
-              }
-            }
-          }
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Contact" } } } }
+          },
+          "500": { "description": "Server error" }
         }
       },
       "post": {
-        "summary": "Create a contact",
+        "summary": "Create contact",
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } } }
         },
         "responses": {
           "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
-          "400": { "description": "Validation error" }
+          "400": { "description": "Validation error" },
+          "500": { "description": "Server error" }
         }
       }
     },
@@ -42,7 +41,8 @@
         "responses": {
           "200": { "description": "Contact", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
           "400": { "description": "Invalid id" },
-          "404": { "description": "Not found" }
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
         }
       },
       "put": {
@@ -50,14 +50,13 @@
         "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
         "requestBody": {
           "required": true,
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContactCreate" } } }
         },
         "responses": {
           "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contact" } } } },
           "400": { "description": "Invalid id / validation error" },
-          "404": { "description": "Not found" }
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
         }
       },
       "delete": {
@@ -66,7 +65,69 @@
         "responses": {
           "204": { "description": "Deleted" },
           "400": { "description": "Invalid id" },
-          "404": { "description": "Not found" }
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+
+    "/companies": {
+      "get": {
+        "summary": "List companies",
+        "responses": {
+          "200": {
+            "description": "List of companies",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Company" } } } }
+          },
+          "500": { "description": "Server error" }
+        }
+      },
+      "post": {
+        "summary": "Create company",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CompanyCreate" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Company" } } } },
+          "400": { "description": "Validation error" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/companies/{id}": {
+      "get": {
+        "summary": "Get company by id",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "Company", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Company" } } } },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "put": {
+        "summary": "Update company",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CompanyCreate" } } }
+        },
+        "responses": {
+          "200": { "description": "Updated", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Company" } } } },
+          "400": { "description": "Invalid id / validation error" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete company",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "204": { "description": "Deleted" },
+          "400": { "description": "Invalid id" },
+          "404": { "description": "Not found" },
+          "500": { "description": "Server error" }
         }
       }
     }
@@ -95,6 +156,23 @@
           "birthday": { "type": "string" }
         },
         "required": ["firstName", "lastName", "email", "favoriteColor", "birthday"]
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "665e9bf8c8f7f06e99f6d2ab" },
+          "name": { "type": "string", "example": "OpenAI" },
+          "domain": { "type": "string", "example": "openai.com" }
+        },
+        "required": ["_id", "name"]
+      },
+      "CompanyCreate": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "domain": { "type": "string" }
+        },
+        "required": ["name"]
       }
     }
   }

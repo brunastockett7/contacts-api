@@ -1,6 +1,7 @@
 // db/connect.js
 const { MongoClient } = require('mongodb');
 
+let _client;
 let _db;
 
 const initDb = async (callback) => {
