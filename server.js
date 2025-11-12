@@ -37,6 +37,10 @@ app.get('/', (_req, res) => res.json({ ok: true, docs: '/api-docs' }));
 // Mount contacts routes (MVC)
 app.use('/contacts', contactsRoutes);
 
+// Mount companies routes (MVC)
+const companiesRoutes = require('./routes/companies');
+app.use('/companies', companiesRoutes);
+
 // Helper: auto-open default browser locally
 function openBrowser(url) {
   if (isProd) return; // never auto-open on Render
