@@ -104,16 +104,23 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid contact id' });
 
-    const del = await getDb().collection(COLLECTION).findOneAndDelete({ _id: new ObjectId(id) });
-    if (!del.value) return res.status(404).json({ message: 'Contact not found' });
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid contact id' });
+    }
 
-    res.status(204).send(); // rubric: 204 on successful delete
+    const del = await getDb()
+      .collection(COLLECTION)
+      .findOneAndDelete({ _id: new ObjectId(id) });
+
+    // In MongoDB v6, findOneAndDelete returns the document OR null
+    if (!del) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    return res.status(204).send();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Failed to delete contact' });
+    return res.status(500).json({ message: 'Failed to delete contact' });
   }
 });
-
-module.exports = router;
