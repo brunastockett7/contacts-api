@@ -113,7 +113,6 @@ router.delete('/:id', async (req, res) => {
       .collection(COLLECTION)
       .findOneAndDelete({ _id: new ObjectId(id) });
 
-    // In MongoDB v6, findOneAndDelete returns the document OR null
     if (!del) {
       return res.status(404).json({ message: 'Contact not found' });
     }
@@ -124,3 +123,5 @@ router.delete('/:id', async (req, res) => {
     return res.status(500).json({ message: 'Failed to delete contact' });
   }
 });
+
+module.exports = router; // ← YES, KEEP THIS
