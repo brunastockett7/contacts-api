@@ -113,7 +113,8 @@ router.delete('/:id', async (req, res) => {
       .collection(COLLECTION)
       .findOneAndDelete({ _id: new ObjectId(id) });
 
-    if (!del) {
+    // Correct check for MongoDB v6+
+    if (!del.value) {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
