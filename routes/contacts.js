@@ -79,27 +79,45 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /contacts/:id  (replace/update)
+// PUT /contacts/:id  (replace/update)
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) return res.status(400).json({ message: 'Invalid contact id' });
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid contact id' });
+    }
 
     validateContact(req.body);
 
-    const result = await getDb().collection(COLLECTION).findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: req.body },
-      { returnDocument: 'after' }
-    );
+    const updateData = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      favoriteColor: req.body.favoriteColor,
+      birthday: req.body.birthday
+    };
 
-    if (!result.value) return res.status(404).json({ message: 'Contact not found' });
-    res.status(200).json(result.value);
+    const result = await getDb()
+      .collection(COLLECTION)
+      .findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        { $set: updateData },
+        { returnDocument: 'after' }
+      );
+
+    // FIX: MongoDB returns the document directly, NOT inside result.value
+    if (!result) {
+      return res.status(404).json({ message: 'Contact not found' });
+    }
+
+    return res.status(200).json(result);
+
   } catch (err) {
     console.error(err);
-    res.status(err.status || 500).json({ message: err.message || 'Failed to update contact' });
+    return res.status(500).json({ message: 'Failed to update contact' });
   }
 });
-
 
 // DELETE /contacts/:id  (remove)
 router.delete('/:id', async (req, res) => {
