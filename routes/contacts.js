@@ -128,16 +128,15 @@ router.delete('/:id', async (req, res) => {
       return res.status(400).json({ message: 'Invalid contact id' });
     }
 
-    const del = await getDb()
+    const result = await getDb()
       .collection(COLLECTION)
-      .findOneAndDelete({ _id: new ObjectId(id) });
+      .deleteOne({ _id: new ObjectId(id) });
 
-    // Correct check for MongoDB v6+
-    if (!del.value) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'Contact not found' });
     }
 
-    return res.status(204).send();
+    return res.status(204).send();  
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: 'Failed to delete contact' });
